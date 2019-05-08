@@ -5,6 +5,12 @@ class Store
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+
+  ## Database simple data
+  field :name,               type: String, default: ""
+  field :website,             type: String, default: ""
+  field :logo,                type: String, default: "" 
+
   ## Database authenticatable
   field :email,              type: String, default: ""
   field :encrypted_password, type: String, default: ""
