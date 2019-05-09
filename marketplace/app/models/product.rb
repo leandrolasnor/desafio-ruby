@@ -1,7 +1,5 @@
 class Product
     include Mongoid::Document
-
-    has_many :installment
     belongs_to :store
 
     field :name,        type: String, default: ""
