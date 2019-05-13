@@ -10,6 +10,7 @@ class Ability
       can :dashboard, :all
       can :manage, Store, user: user
       can :manage, Product, user: user
+      can :manage, Installment, user: user
     end
     # Define abilities for the passed in user here. For example:
     #

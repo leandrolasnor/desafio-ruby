@@ -6,6 +6,7 @@ class Product
     mount_uploader :image, IUploader
     belongs_to :user
     belongs_to :store
+    has_many :installments, dependent: :destroy
 
     field :name,        type: String, default: ""
     field :price,       type: Float,  default: 0.0

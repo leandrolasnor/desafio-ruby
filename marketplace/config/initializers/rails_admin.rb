@@ -1,4 +1,5 @@
-require Rails.root.join('lib', 'rails_admin', 'custom_actions.rb')
+require Rails.root.join('lib', 'rails_admin', 'introduce_products.rb')
+require 'open-uri' 
 RailsAdmin.config do |config|
   ### Popular gems integration
 
@@ -24,16 +25,11 @@ RailsAdmin.config do |config|
   # config.show_gravatar = true
   config.model Store do
     create do
-      fields :name, :website, :email
-      field :user_id, :hidden do
+      fields :name, :website, :email, :logo
+      field :user, :hidden do
         default_value do
           binding[:view]._current_user.id
         end
-      end
-      field :logo do
-        thumb_method :thumb
-        delete_method :asset_delete
-        cache_method :asset_cache
       end
     end
     update do
@@ -49,61 +45,87 @@ RailsAdmin.config do |config|
 
   config.model Product do
     create do
-      fields :store, :name, :price, :url
-      field :user_id, :hidden do
+      fields :store, :name, :image, :price, :url
+      field :user, :hidden do
         default_value do
           binding[:view]._current_user.id
         end
       end
-      field :image do
-        thumb_method :thumb
-        delete_method :asset_delete
-        cache_method :asset_cache
-      end
     end
     update do
-      fields :store, :name, :price, :url, :image
+      fields :store, :name, :image, :price, :url, :image
     end
     list do
       fields :store, :name, :price, :url, :image
     end
     show do
-      fields :store, :name, :price, :url, :image
+      fields :store, :name, :price, :url, :image, :installments
+    end
+  end
+
+  config.model Installment do
+    create do
+      field :user, :hidden do
+        default_value do
+          binding[:view]._current_user
+        end
+      end
+      field :numberofinstallments, :enum do
+        enum do
+          (1..48).to_a
+        end
+      end
+      fields :product, :name, :value, :interestrate, :totalvalueplusinterestrate, :paymentsystemname, :paymentsystemgroupname
+    end
+    update do
+      field :numberofinstallments, :enum do
+        enum do
+          (1..48).to_a
+        end
+      end
+      fields :product, :name, :value, :interestrate, :totalvalueplusinterestrate, :paymentsystemname, :paymentsystemgroupname
+    end
+    list do
+      fields :product, :name, :value, :interestrate, :totalvalueplusinterestrate, :paymentsystemname, :paymentsystemgroupname, :numberofinstallments
+    end
+    show do
+      fields :product, :name, :value, :interestrate, :totalvalueplusinterestrate, :paymentsystemname, :paymentsystemgroupname, :numberofinstallments
     end
   end
 
   config.actions do
     dashboard do
-      except [User, Installment]
+      except ['User']
     end
     index do
-      except [User, Installment]
+      except ['User']
     end
     new do
-      except [User, Installment]
+      except ['User']
     end
     export do
-      except [User, Installment]
+      except ['User']
     end
     bulk_delete do
-      except [User, Installment]
+      except ['User']
     end
     show do
-      except [User, Installment]
+      except ['User']
     end
     edit do
-      except [User, Installment]
+      except ['User']
     end
     delete do
-      except [User, Installment]
+      except ['User']
     end
-    introduce_products
-    expunge_products
+    introduce_products do
+      only ['Store']
+    end
+    expunge_products do
+      only ['Store']
+    end
     show_in_app do
-      except [User, Installment]
+      except [User]
     end
-    ## With an audit adapter, you can add:
-    # history_index
-    # history_show
   end
 end

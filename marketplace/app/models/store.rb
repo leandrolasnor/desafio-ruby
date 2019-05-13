@@ -5,7 +5,7 @@ class Store
     attr_accessor :asset_delete, :asset_cache
     mount_uploader :logo, IUploader
     belongs_to :user
-    has_many :products
+    has_many :products, dependent: :destroy
     field :name,    type: String, default:""
     field :website, type: String,  default: ""
     field :logo,    type: String, default: ""

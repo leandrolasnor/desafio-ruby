@@ -1,21 +1,21 @@
 require 'rails_admin/config/actions'
 require 'rails_admin/config/actions/base'
-require 'rest-client'
 
 module RailsAdmin
     module Config
       module Actions
         class IntroduceProducts < RailsAdmin::Config::Actions::Base
             RailsAdmin::Config::Actions.register(self)
-            register_instance_option :only do
-              Store
-            end
             register_instance_option :member do
               true
             end
             register_instance_option :visible? do 
                 subject = bindings[:object]
-                subject.products.length == 0
+                p subject.to_a
+                subject.class.name.downcase == "store" && (subject["products"].nil? || subject["products"].length == 0)
+            end
+            register_instance_option :only do
+              Store
             end
             register_instance_option :pjax? do
               true
@@ -27,11 +27,25 @@ module RailsAdmin
               [:get]
             end
             register_instance_option :controller do
-              Proc.new do
-                url = "https://www.fossil.com.br/api/catalog_system/pub/products/search/"
-                response = RestClient.get(url, headers={})
-                p response
-                flash[:notice] = "Products Imported | Store #{@object.name}"
+              proc do
+                begin
+                  response = open('https://www.fossil.com.br/api/catalog_system/pub/products/search').read
+                  products = JSON.parse(response)
+                  products.each do |item|
+                    product = Product.new
+                    product.name = item["productName"]
+                    product.price = item["items"][0]["sellers"][0]["commertialOffer"]["Price"]
+                    product.image = item["items"][0]["images"][0]["imageUrl"]
+                    product.url = item["items"][0]["sellers"][0]["addToCartLink"]
+                    product.store_id = @object["_id"]
+                    product.user_id = @object["user_id"]
+                    #product.installments = item["items"][0]["sellers"][0]["commertialOffer"]["Installments"]
+                    product.insert
+                  end
+                  flash[:notice] = "Products Imported | Store #{@object.name}"
+                rescue StandardError => e
+                  p e.message
+                end
                 redirect_to back_or_index
               end
             end
@@ -46,7 +60,8 @@ module RailsAdmin
             end
             register_instance_option :visible? do 
                 subject = bindings[:object]
-                subject.products.length > 0
+                p subject.to_a
+                subject.class.name.downcase == "store" && !subject["products"].nil? && subject["products"].length > 0
             end
             register_instance_option :link_icon do
                 'icon-fire'
@@ -56,7 +71,8 @@ module RailsAdmin
             end
             register_instance_option :controller do
               Proc.new do
-                flash[:notice] = "Expunge Products | Store #{@object.name}"
+                Product.where(:store_id => @object.id).destroy_all
+                flash[:notice] = "Expunged Products | Store #{@object.name}"
                 redirect_to back_or_index
               end
             end
