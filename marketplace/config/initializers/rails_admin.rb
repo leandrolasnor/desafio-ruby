@@ -1,5 +1,6 @@
 require Rails.root.join('lib', 'rails_admin', 'introduce_products.rb')
 require 'open-uri' 
+require 'rake'
 RailsAdmin.config do |config|
 
   config.authorize_with :cancan
@@ -30,7 +31,7 @@ RailsAdmin.config do |config|
       fields :store, :name, :image, :price, :url
       field :user, :hidden do
         default_value do
-          binding[:view]._current_user.id
+          binding[:view]._current_user
         end
       end
     end
@@ -107,7 +108,7 @@ RailsAdmin.config do |config|
       only ['Store']
     end
     show_in_app do
-      except [User]
+      except ['User']
     end
   end
 end

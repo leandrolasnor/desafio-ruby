@@ -98,6 +98,12 @@ en:
         menu: "Multiple delete"
         breadcrumb: "Multiple delete"
         bulk_link: "Delete selected %{model_label_plural}"
+      expunge_products:
+        title: "Expunge Products > %{model_label} '%{object_label}'"
+        menu: "Expunge"
+        breadcrumb: "Expunge Products"
+        link: "Expunge for '%{object_label}'"
+        done: "Punged"
       introduce_products:
         title: "Import Products > %{model_label} '%{object_label}'"
         menu: "Import"
