@@ -31,7 +31,7 @@ development:
 
         # The user's database roles.
         roles:
-        #  - dbOwner
+          - dbOwner
 
         # Change the default authentication mechanism. Valid options are: :scram,
         # :mongodb_cr, :mongodb_x509, and :plain. Note that all authentication
@@ -145,6 +145,21 @@ development:
     # Application name that is printed to the mongodb logs upon establishing a
     # connection in server versions >= 3.4. Note that the name cannot exceed 128 bytes.
     # app_name: MyApplicationName
+production:
+  clients:
+    default:
+      database: projectnodedb
+      hosts:
+        - ds045107.mlab.com:45107
+      options:
+        user: intratavel
+        password: 15f5286c2a
+        roles:
+          - dbOwner
+        auth_mech: :scram
+        auth_source: projectnodedb
+        connect: :direct
+  options:
 test:
   clients:
     default:
